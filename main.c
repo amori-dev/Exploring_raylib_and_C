@@ -9,6 +9,8 @@ struct Window {
 
 struct Player {
     float speed;
+    float friction;
+    float gravity;
     Vector2 pos;
     Vector2 vel;
     Texture2D texture;
@@ -26,6 +28,8 @@ int main(void) {
     InitWindow(window.width, window.height, "");
 
     player.speed = 400.0;
+    player.friction = 0.01;
+    player.gravity = 0;
     player.texture = (Texture2D)LoadTexture("Art/player.png");
     player.pos = (Vector2){0, 0};
     player.vel = (Vector2){0, 0};
@@ -35,32 +39,17 @@ int main(void) {
     cam.zoom = 1.0;
 
     while (!WindowShouldClose()) {
-        if (IsKeyDown(KEY_A)) { 
-            player.vel.x = -1;
+        float dt = GetFrameTime();
+
+        if (IsKeyDown(KEY_A)) {
+            player.vel.x = -player.speed * dt;
         }
         else if (IsKeyDown(KEY_D)) {
-            player.vel.x = 1;
+            player.vel.x = player.speed * dt;
         }
         else {
-            player.vel.x = 0;
+            // decel to a stop
         }
-
-        if (IsKeyDown(KEY_W)) {
-            player.vel.y = -1;
-        }
-        else if (IsKeyDown(KEY_S)) {
-            player.vel.y = 1;
-        }
-        else {
-            player.vel.y = 0;
-        }
-
-        if (Vector2Length(player.vel) != 0) {
-            player.vel = Vector2Normalize(player.vel);
-            player.vel = Vector2Scale(player.vel, player.speed * GetFrameTime());
-        }
-
-        player.pos = Vector2Add(player.pos, player.vel);
 
         BeginDrawing();
         BeginMode2D(cam);
